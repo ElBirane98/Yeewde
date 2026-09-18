@@ -14,7 +14,7 @@ load_dotenv()
 
 # Configuration de la page Streamlit
 st.set_page_config(
-    page_page_title="Yeewde AI - Supply Chain Engine",
+    page_title="Yeewde AI - Supply Chain Engine",
     page_icon="📦",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -30,7 +30,7 @@ def get_db_connection():
 
 # Barre latérale - Navigation
 st.sidebar.title("📦 Yeewde AI")
-st.sidebar.caption("DataOps • MLOps • Prescriptive RAG Engine")
+st.sidebar.caption("Data Platform & IA pour la Supply Chain")
 
 page = st.sidebar.radio(
     "Navigation",

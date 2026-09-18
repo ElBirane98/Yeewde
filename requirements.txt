@@ -1,0 +1,34 @@
+# Data & transformation
+duckdb
+dbt-core
+dbt-duckdb
+elementary-data
+dlt                    # optionnel, bonus Phase 4 (ingestion incrémentale)
+
+# Orchestration
+dagster
+dagster-webserver
+
+# Machine Learning & MLOps
+lightgbm
+scikit-learn
+mlflow
+evidently
+
+# RAG / IA Générative
+langchain
+langchain-groq
+langchain-community
+chromadb
+
+# API & Cockpit
+fastapi
+uvicorn
+streamlit
+plotly
+
+# Utilitaires
+pandas
+python-dotenv
+pytest
+flake8

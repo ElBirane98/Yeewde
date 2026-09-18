@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: marts_otif_kpi
+    description: "Table de fait unitaire des commandes d'achat avec calcul de l'OTIF"
+    columns:
+      - name: po_id
+        description: "Clé primaire unique de la commande"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: supplier_id
+        description: "Identifiant du fournisseur"
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_purchase_orders')
+                field: supplier_id
+
+      - name: part_id
+        description: "Identifiant de la pièce"
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_parts_master')
+                field: part_id
+
+      - name: promised_date
+        description: "Date de livraison promise par le fournisseur"
+        data_tests:
+          - not_null
+
+      - name: otif_score
+        description: "Score binaire OTIF (1 = On-Time In-Full, 0 = non respecté)"
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              arguments:
+                value_set: [0, 1]
+                row_condition: "otif_score is not null"
+
+  - name: marts_supplier_kpi
+    description: "Table de dimension agrégée de performance des fournisseurs"
+    columns:
+      - name: supplier_id
+        description: "Clé primaire du fournisseur"
+        data_tests:
+          - unique
+          - not_null
+
+      - name: total_orders
+        description: "Nombre total de commandes passées"
+        data_tests:
+          - not_null
+
+      - name: otif_rate
+        description: "Taux OTIF global du fournisseur (entre 0 et 1)"
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0.0
+                max_value: 1.0
+                row_condition: "otif_rate is not null"

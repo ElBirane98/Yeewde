@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: bronze
+    config:
+      meta:
+        external_location: "data/bronze/{name}.parquet"
+    tables:
+      - name: parts_master
+        description: "Référentiel des pièces aéronautiques"
+      - name: purchase_orders
+        description: "Commandes d'achat ERP pour le calcul de l'OTIF"
+      - name: quality_incidents
+        description: "Journal des incidents qualité et pièces défectueuses"
+      - name: supply_chain_history
+        description: "Historique temporel des stocks, consommations et prévisions"

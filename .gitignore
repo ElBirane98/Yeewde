@@ -1,0 +1,28 @@
+# Environnement
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# Données & artefacts générés
+data/bronze/*
+data/silver/*
+data/gold/*
+!data/bronze/.gitkeep
+!data/silver/.gitkeep
+!data/gold/.gitkeep
+
+mlruns/*
+!mlruns/.gitkeep
+
+vector_db/chroma_data/*
+!vector_db/chroma_data/.gitkeep
+
+# dbt
+dbt_yeewde/target/
+dbt_yeewde/dbt_packages/
+dbt_yeewde/logs/
+
+# IDE
+.vscode/
+.idea/

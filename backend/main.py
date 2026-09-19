@@ -104,17 +104,16 @@ def kpi_otif() -> dict[str, Any]:
 
 
 @app.get("/predict/{po_id}")
-def predict(po_id: str) -> dict[str, Any]:
+def predict_risk(po_id: str) -> dict[str, Any]:
+    """Score de risque de non-OTIF pour une commande précise (modèle LightGBM)."""
     try:
         result = predict_po(po_id)
-    except Exception as exc:
-        logger.exception("Prédiction impossible pour %s", po_id)
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Le modèle de prédiction est indisponible.",
-        ) from exc
-    if "error" in result:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=result["error"])
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    if result.get("source") == "fallback":
+        raise HTTPException(status_code=404, detail=result.get("error", "Commande introuvable."))
+
     return result
 
 

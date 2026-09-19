@@ -695,6 +695,71 @@ uvicorn backend.main:app --reload &
 streamlit run frontend/app.py
 ```
 
+### 🪟 Commandes Windows (PowerShell)
+
+Depuis le dossier du projet `C:\Yeewde` :
+
+```powershell
+# 1. Activer l'environnement virtuel
+cd C:\Yeewde
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+.\.venv\Scripts\Activate.ps1
+
+# 2. Installer ou mettre à jour les dépendances
+python -m pip install -r requirements.txt
+
+# 3. Préparer dbt si nécessaire
+dbt deps --project-dir dbt_yeewde --profiles-dir dbt_yeewde
+```
+
+Ouvrir ensuite **deux terminaux PowerShell** dans `C:\Yeewde`.
+
+**Terminal 1 — API FastAPI :**
+
+```powershell
+cd C:\Yeewde
+.\.venv\Scripts\Activate.ps1
+uvicorn backend.main:app --host 127.0.0.1 --port 8000
+```
+
+**Terminal 2 — Dashboard Streamlit :**
+
+```powershell
+cd C:\Yeewde
+.\.venv\Scripts\Activate.ps1
+streamlit run frontend/app.py --server.port 8502 --server.address 127.0.0.1
+```
+
+Ouvrir le dashboard à l'adresse <http://127.0.0.1:8502>.
+
+**Commandes utiles :**
+
+```powershell
+# Vérifier l'API
+Invoke-WebRequest http://127.0.0.1:8000/health
+
+# Injecter 15 commandes ERP simulées
+python -m data_sources.simulate_live_feed --n 15
+
+# Recalculer les modèles dbt après une ingestion
+dbt build --project-dir dbt_yeewde --profiles-dir dbt_yeewde
+
+# Recalculer le rapport de dérive
+python -m ml_engine.drift_monitor
+
+# Lancer tous les tests
+python -m pytest tests -q
+
+# Arrêter les serveurs dans chaque terminal
+Ctrl+C
+```
+
+Pour arrêter en une commande les processus Python liés au projet :
+
+```powershell
+Get-CimInstance Win32_Process | Where-Object { $_.CommandLine -like '*C:\Yeewde*' -and $_.ProcessId -ne $PID } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+```
+
 ---
 
 ## 🧪 Tests
@@ -703,7 +768,7 @@ streamlit run frontend/app.py
 |---|---|
 | Qualité des données | `dbt test --project-dir dbt_yeewde` |
 | Pipeline end-to-end | `pytest tests/test_pipeline_e2e.py` |
-| API FastAPI | `pytest backend/tests/` |
+| API FastAPI | `pytest tests/test_api.py` |
 | Linting | `flake8 ml_engine/ backend/ frontend/ rag_engine/` |
 
 ---

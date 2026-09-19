@@ -3,11 +3,18 @@ ml_engine/feature_engineering.py
 Lit la table Gold (marts_otif_kpi) depuis DuckDB et retourne
 un DataFrame prêt pour l'entraînement ou la prédiction.
 """
+import hashlib
+
 import duckdb
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
 
 from ml_engine.config import DUCKDB_PATH, FEATURE_COLS, TARGET_COL
+
+
+def _stable_category_code(value: object) -> int:
+    """Encode a category deterministically for training and single-row scoring."""
+    normalized = str(value if pd.notna(value) else "UNKNOWN").strip().lower()
+    return int(hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:8], 16)
 
 
 def load_gold_data() -> pd.DataFrame:
@@ -19,7 +26,7 @@ def load_gold_data() -> pd.DataFrame:
     return df
 
 
-def build_features(df: pd.DataFrame) -> pd.DataFrame:
+def build_features(df: pd.DataFrame, *, require_target: bool = True) -> pd.DataFrame:
     """
     Transforme le DataFrame Gold en features ML :
     - Encode les colonnes catégorielles
@@ -36,8 +43,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     }
     for raw_col, enc_col in cat_cols.items():
         if raw_col in df.columns:
-            le = LabelEncoder()
-            df[enc_col] = le.fit_transform(df[raw_col].fillna("UNKNOWN"))
+            df[enc_col] = df[raw_col].map(_stable_category_code)
         else:
             df[enc_col] = 0
 
@@ -50,7 +56,7 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     df[numeric_cols] = df[numeric_cols].fillna(0)
 
     # ── Filtre : lignes avec target connue (commandes livrées) ────────────────
-    if TARGET_COL in df.columns:
+    if require_target and TARGET_COL in df.columns:
         df = df.dropna(subset=[TARGET_COL])
 
     return df

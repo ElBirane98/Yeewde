@@ -2,7 +2,6 @@
 duckdb
 dbt-core
 dbt-duckdb
-elementary-data
 dlt                    # optionnel, bonus Phase 4 (ingestion incrémentale)
 
 # Orchestration
@@ -20,6 +19,7 @@ langchain
 langchain-groq
 langchain-community
 chromadb
+groq
 
 # API & Cockpit
 fastapi
@@ -29,6 +29,7 @@ plotly
 
 # Utilitaires
 pandas
+pyarrow
 python-dotenv
 pytest
 flake8

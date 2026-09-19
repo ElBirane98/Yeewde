@@ -5,8 +5,6 @@ Chaque document = un fournisseur avec ses KPIs historiques.
 Usage : python -m rag_engine.indexer
 """
 import duckdb
-import chromadb
-from chromadb.utils import embedding_functions
 
 from rag_engine.config import CHROMA_DIR, CHROMA_COLLECTION, EMBEDDING_MODEL
 from ml_engine.config import DUCKDB_PATH
@@ -63,6 +61,12 @@ def build_index(force_rebuild: bool = False):
     Cree ou recharge la collection ChromaDB.
     Si force_rebuild=True, supprime et reindexe.
     """
+    try:
+        import chromadb
+        from chromadb.utils import embedding_functions
+    except ImportError as exc:
+        raise RuntimeError("ChromaDB n'est pas installé. Installez les dépendances RAG.") from exc
+
     client = chromadb.PersistentClient(path=CHROMA_DIR)
 
     # Verifie si la collection existe deja

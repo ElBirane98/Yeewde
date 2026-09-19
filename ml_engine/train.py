@@ -54,8 +54,7 @@ def train():
         model = LGBMClassifier(**LGBM_PARAMS)
         model.fit(
             X_train, y_train,
-            eval_X=X_test,
-            eval_y=y_test,
+            eval_set=[(X_test, y_test)],
         )
 
         # ── 4. Évaluation ─────────────────────────────────────────────────────
@@ -93,6 +92,10 @@ def train():
         with open(MODEL_PATH, "wb") as f:
             pickle.dump(model, f)
         print(f"\n[OK] Modele sauvegarde -> {MODEL_PATH}")
+
+        from ml_engine.explainability import save_importance_snapshot
+
+        save_importance_snapshot()
 
         run_id = mlflow.active_run().info.run_id
         print(f"[OK] MLflow run_id : {run_id}")

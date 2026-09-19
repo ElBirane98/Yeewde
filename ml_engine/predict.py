@@ -43,7 +43,15 @@ def predict_po(po_id: str) -> dict:
     conn.close()
 
     if df.empty:
-        return {"error": f"po_id '{po_id}' introuvable dans gold.marts_otif_kpi"}
+        return {
+            "po_id": po_id,
+            "otif_proba": 0.5,
+            "risk_score": 0.5,
+            "risk_level": "MOYEN",
+            "predicted_otif": 0,
+            "source": "fallback",
+            "error": f"po_id '{po_id}' introuvable dans gold.marts_otif_kpi",
+        }
 
     features_df = build_features(df)
 

@@ -1,0 +1,25 @@
+name: dbt Quality Checks
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Install dbt dependencies
+        run: dbt deps --project-dir dbt_yeewde --profiles-dir dbt_yeewde
+      - name: Materialize Bronze data
+        run: python -m data_sources.bronze
+      - name: Build and test dbt models
+        run: dbt build --project-dir dbt_yeewde --profiles-dir dbt_yeewde

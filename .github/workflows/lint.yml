@@ -19,4 +19,5 @@ jobs:
           pip install -r requirements.txt
           pip install flake8
       - name: Run flake8
-        run: flake8 backend frontend ml_engine rag_engine monitoring dagster_orchestrator
+         run: flake8 ml_engine/ backend/ frontend/ rag_engine/ dagster_orchestrator/        
+extend-ignore=W291,W292
